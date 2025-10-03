@@ -1,0 +1,9 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Local files
+*.log
+.idea/
+.vscode/
