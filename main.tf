@@ -9,6 +9,8 @@ terraform {
 
 provider "kubernetes" {
   config_path = "~/.kube/config"
+  
+  config_context = "minikube"
 }
 
 # Namespace za našu aplikaciju
@@ -50,9 +52,19 @@ resource "kubernetes_deployment" "backend" {
         }
         container {
           name  = "counter-backend"
-          image = "zoddo16/counter-backend:latest"
+          image = var.backend_image
           port {
             container_port = 8000
+          }
+          resources {
+            requests = {
+              cpu    = "100m"    # 0.1 CPU core
+              memory = "128Mi"   # 128 Megabytes
+            }
+            limits = {
+              cpu    = "500m"    # 0.5 CPU core  
+              memory = "256Mi"   # 256 Megabytes
+            }
           }
         }
       }
@@ -110,9 +122,19 @@ resource "kubernetes_deployment" "frontend" {
         }
         container {
           name  = "counter-frontend"
-          image = "zoddo16/counterapp-ui:latest"
+          image = var.frontend_image
           port {
             container_port = 80
+          }
+          resources {
+            requests = {
+              cpu    = "100m"
+              memory = "128Mi"
+            }
+            limits = {
+              cpu    = "500m"
+              memory = "256Mi"
+            }
           }
         }
       }
