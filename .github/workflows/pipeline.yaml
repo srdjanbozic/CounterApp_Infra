@@ -29,11 +29,10 @@ jobs:
           terraform_version: 1.5.0
 
       - name: Terraform Format Check
-        run: terraform fmt -check -recursive
-        continue-on-error: true
+        run: terraform fmt -check -recursive || true
 
       - name: Terraform Init
-        run: terraform -chdir=environments/${{ github.event.inputs.environment || 'dev' }} init -backend-config="path=terraform.tfstate"
+        run: terraform -chdir=environments/${{ github.event.inputs.environment || 'dev' }} init -backend-config=path=terraform.tfstate
 
       - name: Terraform Validate
         run: terraform -chdir=environments/${{ github.event.inputs.environment || 'dev' }} validate
@@ -59,7 +58,7 @@ jobs:
           terraform_version: 1.5.0
 
       - name: Terraform Init
-        run: terraform -chdir=environments/${{ github.event.inputs.environment || 'dev' }} init -backend-config="path=terraform.tfstate"
+        run: terraform -chdir=environments/${{ github.event.inputs.environment || 'dev' }} init -backend-config=path=terraform.tfstate
 
       - name: Terraform Apply
         run: |
