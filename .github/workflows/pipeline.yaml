@@ -33,19 +33,16 @@ jobs:
         continue-on-error: true
 
       - name: Terraform Init
-        run: |
-          terraform -chdir=environments/${{ github.event.inputs.environment || 'dev' }} init \
-            -backend-config="path=terraform.tfstate"
+        run: terraform -chdir=environments/${{ github.event.inputs.environment || 'dev' }} init -backend-config="path=terraform.tfstate"
 
       - name: Terraform Validate
         run: terraform -chdir=environments/${{ github.event.inputs.environment || 'dev' }} validate
 
       - name: Terraform Plan
         if: github.event_name == 'pull_request'
-        run: |
-          terraform -chdir=environments/${{ github.event.inputs.environment || 'dev' }} plan \
-            -var="frontend_image=zoddo16/counterapp-ui:main" \
-            -var="backend_image=zoddo16/counter-backend:main"
+        run: terraform -chdir=environments/${{ github.event.inputs.environment || 'dev' }} plan \
+              -var="frontend_image=zoddo16/counterapp-ui:main" \
+              -var="backend_image=zoddo16/counter-backend:main"
 
   apply:
     needs: validate
@@ -61,15 +58,12 @@ jobs:
           terraform_version: 1.5.0
 
       - name: Terraform Init
-        run: |
-          terraform -chdir=environments/${{ github.event.inputs.environment || 'dev' }} init \
-            -backend-config="path=terraform.tfstate"
+        run: terraform -chdir=environments/${{ github.event.inputs.environment || 'dev' }} init -backend-config="path=terraform.tfstate"
 
       - name: Terraform Apply
-        run: |
-          terraform -chdir=environments/${{ github.event.inputs.environment || 'dev' }} apply -auto-approve \
-            -var="frontend_image=zoddo16/counterapp-ui:main" \
-            -var="backend_image=zoddo16/counter-backend:main"
+        run: terraform -chdir=environments/${{ github.event.inputs.environment || 'dev' }} apply -auto-approve \
+              -var="frontend_image=zoddo16/counterapp-ui:main" \
+              -var="backend_image=zoddo16/counter-backend:main"
 
       - name: Show Outputs
         run: terraform -chdir=environments/${{ github.event.inputs.environment || 'dev' }} output
