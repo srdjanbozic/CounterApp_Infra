@@ -1,15 +1,13 @@
 terraform {
   required_version = ">= 1.5.0"
-  
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = "~> 2.30.0"
     }
   }
-
   backend "local" {
-    path = "/home/zodd/terraform-states/counterapp/terraform.tfstate"
+    # Workspace će automatski kreirati foldere: terraform.tfstate.d/{workspace}/
   }
 }
 
