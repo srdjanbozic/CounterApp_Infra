@@ -13,11 +13,11 @@ variable "backend_image" {
 variable "frontend_replicas" {
   description = "Number of frontend replicas for QA"
   type        = number
-  default     = 2
+  default     = 1
 }
 
 variable "backend_replicas" {
   description = "Number of backend replicas for QA"
   type        = number
-  default     = 2
+  default     = 1
 }
