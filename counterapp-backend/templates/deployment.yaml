@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: counter-backend
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: counter-backend
+  template:
+    metadata:
+      labels:
+        app: counter-backend
+    spec:
+      containers:
+      - name: counter-backend
+        image: {{ .Values.image }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.port }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        resources:
+          requests:
+            cpu: {{ .Values.resources.requests.cpu }}
+            memory: {{ .Values.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.resources.limits.cpu }}
+            memory: {{ .Values.resources.limits.memory }}
