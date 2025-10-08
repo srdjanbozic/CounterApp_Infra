@@ -1,7 +1,7 @@
 name: frontend-deployment
 appName: counterapp
 namespace: counterapp-qa
-replicas: 1
+replicas: 2
 image: zoddo16/counterapp-ui:dev-latest
 port: 80
 ingressHost: counter-qa.local
