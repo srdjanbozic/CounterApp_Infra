@@ -11,10 +11,16 @@ resource "helm_release" "counterapp_backend" {
   namespace        = "counterapp-${terraform.workspace}"
   chart            = "${path.module}/../counterapp-backend"
   values           = [file("${path.module}/../counterapp-backend/${terraform.workspace}-values.yaml")]
+  
+  atomic           = true
+  cleanup_on_fail  = true
+  timeout          = 600
+  wait             = true
+  
   force_update     = true
   create_namespace = false
   reuse_values     = false
-
+  
   depends_on = [kubernetes_namespace.counterapp]
 }
 
@@ -24,9 +30,15 @@ resource "helm_release" "counterapp_frontend" {
   namespace        = "counterapp-${terraform.workspace}"
   chart            = "${path.module}/../counterapp-frontend"
   values           = [file("${path.module}/../counterapp-frontend/${terraform.workspace}-values.yaml")]
+  
+  atomic           = true
+  cleanup_on_fail  = true
+  timeout          = 600
+  wait             = true
+  
   force_update     = true
   create_namespace = false
   reuse_values     = false
-
+  
   depends_on = [kubernetes_namespace.counterapp]
 }
