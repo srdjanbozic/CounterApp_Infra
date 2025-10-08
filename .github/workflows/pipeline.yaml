@@ -1,0 +1,82 @@
+name: Infrastructure Deployment
+
+on:
+  push:
+    branches: [ main, dev, qa, prod ]
+    paths:
+      - '**.tf'
+      - 'modules/**'
+      - 'environments/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - qa
+          - prod
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    concurrency:
+      group: terraform-${{ github.event.inputs.environment || github.ref_name }}
+      cancel-in-progress: false
+    
+    env:
+      ENV: ${{ github.event.inputs.environment || (github.ref_name == 'main' && 'prod' || github.ref_name) }}
+      TF_IN_AUTOMATION: true
+      TF_INPUT: false
+    
+    steps:
+    - name: Checkout Infrastructure
+      uses: actions/checkout@v4
+    
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.0
+        terraform_wrapper: false
+    
+    - name: Debug Environment
+      run: |
+        echo "Branch: ${{ github.ref_name }}"
+        echo "Environment: ${{ env.ENV }}"
+        echo "Namespace: counterapp-${{ env.ENV }}"
+    
+    - name: Terraform Init
+      run: terraform init
+    
+    - name: Select/Create Workspace
+      run: |
+        terraform workspace select ${{ env.ENV }} 2>/dev/null || \
+        terraform workspace new ${{ env.ENV }}
+        
+        echo "Active workspace:"
+        terraform workspace show
+    
+    - name: Terraform Validate
+      run: terraform validate
+    
+    - name: Terraform Plan
+      run: |
+        terraform plan \
+          -var="frontend_image=zoddo16/counterapp-ui:${{ env.ENV }}-latest" \
+          -var="backend_image=zoddo16/counter-backend:${{ env.ENV }}-latest"
+    
+    - name: Terraform Apply
+      run: |
+        terraform apply -auto-approve \
+          -var="frontend_image=zoddo16/counterapp-ui:${{ env.ENV }}-latest" \
+          -var="backend_image=zoddo16/counter-backend:${{ env.ENV }}-latest"
+    
+    - name: Verify Infrastructure
+      run: |
+        echo " Infrastructure deployment completed!"
+        kubectl get all -n counterapp-${{ env.ENV }}
+        echo ""
+        echo "Ingress:"
+        kubectl get ingress -n counterapp-${{ env.ENV }}

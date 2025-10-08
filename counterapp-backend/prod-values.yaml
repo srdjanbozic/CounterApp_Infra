@@ -1,0 +1,14 @@
+name: backend-deployment
+appName: counterapp
+namespace: counterapp-prod
+replicas: 2
+image: zoddo16/counter-backend:prod-latest
+port: 8000
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "256Mi"
