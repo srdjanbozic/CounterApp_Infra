@@ -2,7 +2,7 @@ name: backend-deployment
 appName: counterapp
 namespace: counterapp-prod
 replicas: 2
-image: zoddo16/counter-backend:prod-latest
+image: zoddo16/counter-backend:dev-latest
 port: 8000
 
 resources:
