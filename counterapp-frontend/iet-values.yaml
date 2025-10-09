@@ -1,0 +1,14 @@
+frontend:
+  appName: counterapp
+  namespace: counterapp-iet
+  replicas: 2
+  image: zoddo16/counterapp-ui:dev-latest
+  port: 80
+  ingressHost: counter-iet.local
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"

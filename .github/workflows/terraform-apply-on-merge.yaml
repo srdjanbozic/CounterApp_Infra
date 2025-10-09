@@ -3,7 +3,7 @@ name: Terraform Apply on Merge
 on:
   pull_request:
     types: [closed]
-    branches: [dev, qa, prod, main]
+    branches: [dev, qa, iet, prod, main]
 
 jobs:
   apply:

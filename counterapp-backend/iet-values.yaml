@@ -1,0 +1,13 @@
+backend:
+  appName: counterapp
+  namespace: counterapp-iet
+  replicas: 1
+  image: zoddo16/counterapp-api:dev-latest
+  port: 8000
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
