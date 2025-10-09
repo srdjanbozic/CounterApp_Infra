@@ -35,7 +35,7 @@ jobs:
           terraform_wrapper: false
 
       - name: Debug refs
-        shell: pwsh
+        shell: powershell
         run: |
           Write-Host "github.ref_name = ${{ github.ref_name }}"
           Write-Host "github.base_ref = ${{ github.base_ref }}"
@@ -43,12 +43,12 @@ jobs:
           Write-Host "ENV (workspace) = $env:ENV"
 
       - name: Terraform init
-        shell: pwsh
+        shell: powershell
         working-directory: deployment
         run: terraform init -no-color -input=false
 
       - name: Ensure/select workspace
-        shell: pwsh
+        shell: powershell
         working-directory: deployment
         run: |
           $WS = "$env:ENV"
@@ -68,11 +68,11 @@ jobs:
           }
 
       - name: Terraform validate
-        shell: pwsh
+        shell: powershell
         working-directory: deployment
         run: terraform validate -no-color
 
       - name: Terraform plan
-        shell: pwsh
+        shell: powershell
         working-directory: deployment
         run: terraform plan -no-color

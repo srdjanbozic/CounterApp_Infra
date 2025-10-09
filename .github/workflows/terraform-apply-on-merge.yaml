@@ -35,18 +35,18 @@ jobs:
           terraform_wrapper: false
 
       - name: Debug refs
-        shell: pwsh
+        shell: powershell
         run: |
           Write-Host "BASE REF (merged into) = ${{ github.event.pull_request.base.ref }}"
           Write-Host "ENV (workspace) = $env:ENV"
 
       - name: Terraform init
-        shell: pwsh
+        shell: powershell
         working-directory: deployment
         run: terraform init -no-color -input=false
 
       - name: Ensure/select workspace
-        shell: pwsh
+        shell: powershell
         working-directory: deployment
         run: |
           $WS = "$env:ENV"
@@ -66,17 +66,17 @@ jobs:
           }
 
       - name: Terraform validate
-        shell: pwsh
+        shell: powershell
         working-directory: deployment
         run: terraform validate -no-color
 
       - name: Terraform apply
-        shell: pwsh
+        shell: powershell
         working-directory: deployment
         run: terraform apply -auto-approve -lock-timeout=5m -no-color
 
       - name: Verify deployment
-        shell: pwsh
+        shell: powershell
         run: |
           Write-Host "Terraform apply completed!"
           kubectl get all -n counterapp-$env:ENV
