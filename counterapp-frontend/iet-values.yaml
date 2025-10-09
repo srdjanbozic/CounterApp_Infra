@@ -1,8 +1,11 @@
+name: frontend-deployment
 appName: counterapp
 namespace: counterapp-iet
-replicas: 1
-image: zoddo16/counterapp-api:dev-latest
-port: 8000
+replicas: 2
+image: zoddo16/counterapp-ui:dev-latest
+port: 80
+ingressHost: counter-iet.local
+
 resources:
   requests:
     cpu: "100m"

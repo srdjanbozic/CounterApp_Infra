@@ -1,13 +1,14 @@
+name: backend-deployment
 appName: counterapp
-namespace: counterapp-iet
-replicas: 2
-image: zoddo16/counterapp-ui:dev-latest
-port: 80
-ingressHost: counter-iet.local
+namespace: counterapp-dev
+replicas: 1
+image: zoddo16/counter-backend:dev-latest
+port: 8000
+
 resources:
   requests:
     cpu: "100m"
     memory: "128Mi"
   limits:
-    cpu: "200m"
+    cpu: "500m"
     memory: "256Mi"
