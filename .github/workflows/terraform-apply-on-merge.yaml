@@ -8,68 +8,75 @@ on:
 jobs:
   apply:
     if: github.event.pull_request.merged == true
-    runs-on: self-hosted
+    runs-on: [self-hosted, Windows, infra]
     permissions:
       contents: read
     concurrency:
       group: tf-apply-${{ github.event.pull_request.base.ref }}
       cancel-in-progress: false
-    
+
     env:
       RAW_REF: ${{ github.event.pull_request.base.ref }}
       ENV: ${{ github.event.pull_request.base.ref == 'main' && 'prod' || github.event.pull_request.base.ref }}
       TF_IN_AUTOMATION: true
       TF_INPUT: false
-    
+
     steps:
       - name: Checkout base branch after merge
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 0
-      
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.5.0
           terraform_wrapper: false
-      
+
       - name: Debug refs
+        shell: powershell
         run: |
-          echo "BASE REF (merged into) = ${{ github.event.pull_request.base.ref }}"
-          echo "ENV (workspace) = ${{ env.ENV }}"
-      
+          Write-Host "BASE REF (merged into) = ${{ github.event.pull_request.base.ref }}"
+          Write-Host "ENV (workspace) = $env:ENV"
+
       - name: Terraform init
+        shell: powershell
         working-directory: deployment
         run: terraform init -no-color -input=false
-      
+
       - name: Ensure/select workspace
+        shell: powershell
         working-directory: deployment
         run: |
-          WS="${{ env.ENV }}"
-          WS=$(echo "$WS" | tr -cd '0-9A-Za-z_-')
-          
-          if [ -z "$WS" ]; then
-            echo "Workspace computed to empty name!"
+          $WS = "$env:ENV"
+          $WS = $WS -replace '[^0-9A-Za-z_-]', ''
+
+          if ([string]::IsNullOrEmpty($WS)) {
+            Write-Error "Workspace computed to empty name!"
             exit 1
-          fi
-          
-          echo "Using workspace: $WS"
-          
-          terraform workspace select "$WS" 2>/dev/null || {
-            terraform workspace new "$WS"
-            terraform workspace select "$WS"
           }
-      
+
+          Write-Host "Using workspace: $WS"
+
+          terraform workspace select $WS 2>$null
+          if ($LASTEXITCODE -ne 0) {
+            terraform workspace new $WS
+            terraform workspace select $WS
+          }
+
       - name: Terraform validate
+        shell: powershell
         working-directory: deployment
         run: terraform validate -no-color
-      
+
       - name: Terraform apply
+        shell: powershell
         working-directory: deployment
         run: terraform apply -auto-approve -lock-timeout=5m -no-color
-      
+
       - name: Verify deployment
+        shell: powershell
         run: |
-          echo "✅ Terraform apply completed!"
-          kubectl get all -n counterapp-${{ env.ENV }}
+          Write-Host "Terraform apply completed!"
+          kubectl get all -n counterapp-$env:ENV
