@@ -1,4 +1,8 @@
-# Namespace resource (kreiran jednom)
+# Locals za environment detection
+locals {
+  environment = terraform.workspace
+}
+# Namespace resource 
 resource "kubernetes_namespace" "counterapp" {
   metadata {
     name = "counterapp-${terraform.workspace}"

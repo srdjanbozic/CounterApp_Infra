@@ -5,68 +5,74 @@ on:
     types: [opened, synchronize, reopened]
     branches: [dev, qa, prod, main]
     paths:
-      - 'deployment/**.tf'
-      - 'counterapp-frontend/**'
-      - 'counterapp-backend/**'
+      - "deployment/**.tf"
+      - "counterapp-frontend/**"
+      - "counterapp-backend/**"
 
 jobs:
   plan:
-    runs-on: self-hosted
+    runs-on: [self-hosted, Windows, infra]
     permissions:
       contents: read
     concurrency:
       group: tf-plan-${{ github.ref }}
       cancel-in-progress: false
-    
+
     env:
       RAW_REF: ${{ github.base_ref != '' && github.base_ref || github.ref_name }}
       ENV: ${{ (github.base_ref != '' && github.base_ref || github.ref_name) == 'main' && 'prod' || (github.base_ref != '' && github.base_ref || github.ref_name) }}
       TF_IN_AUTOMATION: true
       TF_INPUT: false
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.5.0
           terraform_wrapper: false
-      
+
       - name: Debug refs
+        shell: powershell
         run: |
-          echo "github.ref_name = ${{ github.ref_name }}"
-          echo "github.base_ref = ${{ github.base_ref }}"
-          echo "RAW_REF (target) = ${{ env.RAW_REF }}"
-          echo "ENV (workspace) = ${{ env.ENV }}"
-      
+          Write-Host "github.ref_name = ${{ github.ref_name }}"
+          Write-Host "github.base_ref = ${{ github.base_ref }}"
+          Write-Host "RAW_REF (target) = $env:RAW_REF"
+          Write-Host "ENV (workspace) = $env:ENV"
+
       - name: Terraform init
+        shell: powershell
         working-directory: deployment
         run: terraform init -no-color -input=false
-      
+
       - name: Ensure/select workspace
+        shell: powershell
         working-directory: deployment
         run: |
-          WS="${{ env.ENV }}"
-          WS=$(echo "$WS" | tr -cd '0-9A-Za-z_-')
-          
-          if [ -z "$WS" ]; then
-            echo "Workspace computed to empty name!"
+          $WS = "$env:ENV"
+          $WS = $WS -replace '[^0-9A-Za-z_-]', ''
+
+          if ([string]::IsNullOrEmpty($WS)) {
+            Write-Error "Workspace computed to empty name!"
             exit 1
-          fi
-          
-          echo "Using workspace: $WS"
-          
-          terraform workspace select "$WS" 2>/dev/null || {
-            terraform workspace new "$WS"
-            terraform workspace select "$WS"
           }
-      
+
+          Write-Host "Using workspace: $WS"
+
+          terraform workspace select $WS 2>$null
+          if ($LASTEXITCODE -ne 0) {
+            terraform workspace new $WS
+            terraform workspace select $WS
+          }
+
       - name: Terraform validate
+        shell: powershell
         working-directory: deployment
         run: terraform validate -no-color
-      
+
       - name: Terraform plan
+        shell: powershell
         working-directory: deployment
         run: terraform plan -no-color
