@@ -1,22 +1,13 @@
-terraform {
-  required_providers {
-    kubernetes = {
-      source = "hashicorp/kubernetes"
-      version = "2.30.0"
-    }
-  }
-}
-
-provider "kubernetes" {
-  config_path = "~/.kube/config"
-  
-  config_context = "minikube"
+# Locals za dynamic environment
+locals {
+  environment = terraform.workspace == "default" ? "dev" : terraform.workspace
+  namespace   = "counterapp-${local.environment}"
 }
 
 # Namespace za našu aplikaciju
 resource "kubernetes_namespace" "counterapp" {
   metadata {
-    name = "counterapp"
+    name = local.namespace
   }
 }
 
@@ -24,7 +15,7 @@ resource "kubernetes_namespace" "counterapp" {
 resource "kubernetes_deployment" "backend" {
   metadata {
     name      = "backend-deployment"
-    namespace = kubernetes_namespace.counterapp.metadata[0].name
+    namespace = local.namespace
     labels = {
       app = "counter-backend"
     }
@@ -58,25 +49,27 @@ resource "kubernetes_deployment" "backend" {
           }
           resources {
             requests = {
-              cpu    = "100m"    # 0.1 CPU core
-              memory = "128Mi"   # 128 Megabytes
+              cpu    = "100m"
+              memory = "128Mi"
             }
             limits = {
-              cpu    = "500m"    # 0.5 CPU core  
-              memory = "256Mi"   # 256 Megabytes
+              cpu    = "500m"
+              memory = "256Mi"
             }
           }
         }
       }
     }
   }
+
+  depends_on = [kubernetes_namespace.counterapp]
 }
 
 # Backend Service
 resource "kubernetes_service" "backend" {
   metadata {
     name      = "backend-service"
-    namespace = kubernetes_namespace.counterapp.metadata[0].name
+    namespace = local.namespace
   }
   spec {
     selector = {
@@ -88,13 +81,15 @@ resource "kubernetes_service" "backend" {
     }
     type = "ClusterIP"
   }
+
+  depends_on = [kubernetes_namespace.counterapp]
 }
 
 # Frontend Deployment
 resource "kubernetes_deployment" "frontend" {
   metadata {
     name      = "frontend-deployment"
-    namespace = kubernetes_namespace.counterapp.metadata[0].name
+    namespace = local.namespace
     labels = {
       app = "counter-frontend"
     }
@@ -140,13 +135,15 @@ resource "kubernetes_deployment" "frontend" {
       }
     }
   }
+
+  depends_on = [kubernetes_namespace.counterapp]
 }
 
 # Frontend Service
 resource "kubernetes_service" "frontend" {
   metadata {
     name      = "frontend-service"
-    namespace = kubernetes_namespace.counterapp.metadata[0].name
+    namespace = local.namespace
   }
   spec {
     selector = {
@@ -158,22 +155,23 @@ resource "kubernetes_service" "frontend" {
     }
     type = "NodePort"
   }
+
+  depends_on = [kubernetes_namespace.counterapp]
 }
 
 # Ingress za aplikaciju
 resource "kubernetes_ingress_v1" "counterapp" {
   metadata {
     name      = "counter-ingress"
-    namespace = kubernetes_namespace.counterapp.metadata[0].name
+    namespace = local.namespace
     annotations = {
-      "nginx.ingress.kubernetes.io/rewrite-target" = "/"
-      "nginx.ingress.kubernetes.io/ssl-redirect"   = "false"
+      "nginx.ingress.kubernetes.io/ssl-redirect" = "false"
     }
   }
 
   spec {
     rule {
-      host = "counter.local"
+      host = "counter-${local.environment}.local"
       http {
         path {
           path = "/"
@@ -200,4 +198,6 @@ resource "kubernetes_ingress_v1" "counterapp" {
       }
     }
   }
+
+  depends_on = [kubernetes_namespace.counterapp]
 }

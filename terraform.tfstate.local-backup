@@ -1,0 +1,657 @@
+{
+  "version": 4,
+  "terraform_version": "1.5.7",
+  "serial": 21,
+  "lineage": "b38a1922-f8b8-a235-4303-c35ea6bf998d",
+  "outputs": {
+    "application_urls": {
+      "value": {
+        "backend_api": "http://counter.local/api",
+        "frontend": "http://counter.local"
+      },
+      "type": [
+        "object",
+        {
+          "backend_api": "string",
+          "frontend": "string"
+        }
+      ]
+    },
+    "backend_service": {
+      "value": "backend-service",
+      "type": "string"
+    },
+    "frontend_service": {
+      "value": "frontend-service",
+      "type": "string"
+    },
+    "namespace": {
+      "value": "counterapp",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "kubernetes_deployment",
+      "name": "backend",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "id": "counterapp/backend-deployment",
+            "metadata": [
+              {
+                "annotations": {},
+                "generate_name": "",
+                "generation": 1,
+                "labels": {
+                  "app": "counter-backend"
+                },
+                "name": "backend-deployment",
+                "namespace": "counterapp",
+                "resource_version": "35629",
+                "uid": "54ce94c4-8487-4192-92ab-0a2107f77107"
+              }
+            ],
+            "spec": [
+              {
+                "min_ready_seconds": 0,
+                "paused": false,
+                "progress_deadline_seconds": 600,
+                "replicas": "2",
+                "revision_history_limit": 10,
+                "selector": [
+                  {
+                    "match_expressions": [],
+                    "match_labels": {
+                      "app": "counter-backend"
+                    }
+                  }
+                ],
+                "strategy": [
+                  {
+                    "rolling_update": [
+                      {
+                        "max_surge": "25%",
+                        "max_unavailable": "25%"
+                      }
+                    ],
+                    "type": "RollingUpdate"
+                  }
+                ],
+                "template": [
+                  {
+                    "metadata": [
+                      {
+                        "annotations": {},
+                        "generate_name": "",
+                        "generation": 0,
+                        "labels": {
+                          "app": "counter-backend"
+                        },
+                        "name": "",
+                        "namespace": "",
+                        "resource_version": "",
+                        "uid": ""
+                      }
+                    ],
+                    "spec": [
+                      {
+                        "active_deadline_seconds": 0,
+                        "affinity": [],
+                        "automount_service_account_token": true,
+                        "container": [
+                          {
+                            "args": [],
+                            "command": [],
+                            "env": [],
+                            "env_from": [],
+                            "image": "zoddo16/counter-backend:latest",
+                            "image_pull_policy": "Always",
+                            "lifecycle": [],
+                            "liveness_probe": [],
+                            "name": "counter-backend",
+                            "port": [
+                              {
+                                "container_port": 8000,
+                                "host_ip": "",
+                                "host_port": 0,
+                                "name": "",
+                                "protocol": "TCP"
+                              }
+                            ],
+                            "readiness_probe": [],
+                            "resources": [
+                              {
+                                "limits": {
+                                  "cpu": "500m",
+                                  "memory": "256Mi"
+                                },
+                                "requests": {
+                                  "cpu": "100m",
+                                  "memory": "128Mi"
+                                }
+                              }
+                            ],
+                            "security_context": [],
+                            "startup_probe": [],
+                            "stdin": false,
+                            "stdin_once": false,
+                            "termination_message_path": "/dev/termination-log",
+                            "termination_message_policy": "File",
+                            "tty": false,
+                            "volume_mount": [],
+                            "working_dir": ""
+                          }
+                        ],
+                        "dns_config": [],
+                        "dns_policy": "ClusterFirst",
+                        "enable_service_links": true,
+                        "host_aliases": [],
+                        "host_ipc": false,
+                        "host_network": false,
+                        "host_pid": false,
+                        "hostname": "",
+                        "image_pull_secrets": [
+                          {
+                            "name": "dockerhub-secret"
+                          }
+                        ],
+                        "init_container": [],
+                        "node_name": "",
+                        "node_selector": {},
+                        "os": [],
+                        "priority_class_name": "",
+                        "readiness_gate": [],
+                        "restart_policy": "Always",
+                        "runtime_class_name": "",
+                        "scheduler_name": "default-scheduler",
+                        "security_context": [],
+                        "service_account_name": "",
+                        "share_process_namespace": false,
+                        "subdomain": "",
+                        "termination_grace_period_seconds": 30,
+                        "toleration": [],
+                        "topology_spread_constraint": [],
+                        "volume": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "timeouts": null,
+            "wait_for_rollout": true
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6NjAwMDAwMDAwMDAwLCJ1cGRhdGUiOjYwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "kubernetes_namespace.counterapp"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "kubernetes_deployment",
+      "name": "frontend",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "id": "counterapp/frontend-deployment",
+            "metadata": [
+              {
+                "annotations": {},
+                "generate_name": "",
+                "generation": 3,
+                "labels": {
+                  "app": "counter-frontend"
+                },
+                "name": "frontend-deployment",
+                "namespace": "counterapp",
+                "resource_version": "38148",
+                "uid": "ede06751-360a-48e9-aefe-bfa7e2121d84"
+              }
+            ],
+            "spec": [
+              {
+                "min_ready_seconds": 0,
+                "paused": false,
+                "progress_deadline_seconds": 600,
+                "replicas": "2",
+                "revision_history_limit": 10,
+                "selector": [
+                  {
+                    "match_expressions": [],
+                    "match_labels": {
+                      "app": "counter-frontend"
+                    }
+                  }
+                ],
+                "strategy": [
+                  {
+                    "rolling_update": [
+                      {
+                        "max_surge": "25%",
+                        "max_unavailable": "25%"
+                      }
+                    ],
+                    "type": "RollingUpdate"
+                  }
+                ],
+                "template": [
+                  {
+                    "metadata": [
+                      {
+                        "annotations": {},
+                        "generate_name": "",
+                        "generation": 0,
+                        "labels": {
+                          "app": "counter-frontend"
+                        },
+                        "name": "",
+                        "namespace": "",
+                        "resource_version": "",
+                        "uid": ""
+                      }
+                    ],
+                    "spec": [
+                      {
+                        "active_deadline_seconds": 0,
+                        "affinity": [],
+                        "automount_service_account_token": true,
+                        "container": [
+                          {
+                            "args": [],
+                            "command": [],
+                            "env": [],
+                            "env_from": [],
+                            "image": "zoddo16/counterapp-ui:latest",
+                            "image_pull_policy": "IfNotPresent",
+                            "lifecycle": [],
+                            "liveness_probe": [],
+                            "name": "counter-frontend",
+                            "port": [
+                              {
+                                "container_port": 80,
+                                "host_ip": "",
+                                "host_port": 0,
+                                "name": "",
+                                "protocol": "TCP"
+                              }
+                            ],
+                            "readiness_probe": [],
+                            "resources": [
+                              {
+                                "limits": {
+                                  "cpu": "500m",
+                                  "memory": "256Mi"
+                                },
+                                "requests": {
+                                  "cpu": "100m",
+                                  "memory": "128Mi"
+                                }
+                              }
+                            ],
+                            "security_context": [],
+                            "startup_probe": [],
+                            "stdin": false,
+                            "stdin_once": false,
+                            "termination_message_path": "/dev/termination-log",
+                            "termination_message_policy": "File",
+                            "tty": false,
+                            "volume_mount": [],
+                            "working_dir": ""
+                          }
+                        ],
+                        "dns_config": [],
+                        "dns_policy": "ClusterFirst",
+                        "enable_service_links": true,
+                        "host_aliases": [],
+                        "host_ipc": false,
+                        "host_network": false,
+                        "host_pid": false,
+                        "hostname": "",
+                        "image_pull_secrets": [
+                          {
+                            "name": "dockerhub-secret"
+                          }
+                        ],
+                        "init_container": [],
+                        "node_name": "",
+                        "node_selector": {},
+                        "os": [],
+                        "priority_class_name": "",
+                        "readiness_gate": [],
+                        "restart_policy": "Always",
+                        "runtime_class_name": "",
+                        "scheduler_name": "default-scheduler",
+                        "security_context": [],
+                        "service_account_name": "",
+                        "share_process_namespace": false,
+                        "subdomain": "",
+                        "termination_grace_period_seconds": 30,
+                        "toleration": [],
+                        "topology_spread_constraint": [],
+                        "volume": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "timeouts": null,
+            "wait_for_rollout": true
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6NjAwMDAwMDAwMDAwLCJ1cGRhdGUiOjYwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "kubernetes_namespace.counterapp"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "kubernetes_ingress_v1",
+      "name": "counterapp",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "counterapp/counter-ingress",
+            "metadata": [
+              {
+                "annotations": {
+                  "nginx.ingress.kubernetes.io/rewrite-target": "/",
+                  "nginx.ingress.kubernetes.io/ssl-redirect": "false"
+                },
+                "generate_name": "",
+                "generation": 1,
+                "labels": {},
+                "name": "counter-ingress",
+                "namespace": "counterapp",
+                "resource_version": "35660",
+                "uid": "d54a8bfa-e09c-4713-a378-99147d462ec6"
+              }
+            ],
+            "spec": [
+              {
+                "default_backend": [],
+                "ingress_class_name": "nginx",
+                "rule": [
+                  {
+                    "host": "counter.local",
+                    "http": [
+                      {
+                        "path": [
+                          {
+                            "backend": [
+                              {
+                                "resource": [],
+                                "service": [
+                                  {
+                                    "name": "frontend-service",
+                                    "port": [
+                                      {
+                                        "name": "",
+                                        "number": 80
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ],
+                            "path": "/",
+                            "path_type": "ImplementationSpecific"
+                          },
+                          {
+                            "backend": [
+                              {
+                                "resource": [],
+                                "service": [
+                                  {
+                                    "name": "backend-service",
+                                    "port": [
+                                      {
+                                        "name": "",
+                                        "number": 8000
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ],
+                            "path": "/api",
+                            "path_type": "ImplementationSpecific"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "tls": []
+              }
+            ],
+            "status": [
+              {
+                "load_balancer": [
+                  {
+                    "ingress": [
+                      {
+                        "hostname": "",
+                        "ip": "192.168.49.2"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "timeouts": null,
+            "wait_for_load_balancer": null
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDB9fQ==",
+          "dependencies": [
+            "kubernetes_namespace.counterapp"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "kubernetes_namespace",
+      "name": "counterapp",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "counterapp",
+            "metadata": [
+              {
+                "annotations": {},
+                "generate_name": "",
+                "generation": 0,
+                "labels": {},
+                "name": "counterapp",
+                "resource_version": "35542",
+                "uid": "30a4cace-a06e-4003-8d7c-04378cb1ac31"
+              }
+            ],
+            "timeouts": null,
+            "wait_for_default_service_account": false
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiZGVsZXRlIjozMDAwMDAwMDAwMDB9fQ=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "kubernetes_service",
+      "name": "backend",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "id": "counterapp/backend-service",
+            "metadata": [
+              {
+                "annotations": {},
+                "generate_name": "",
+                "generation": 0,
+                "labels": {},
+                "name": "backend-service",
+                "namespace": "counterapp",
+                "resource_version": "35547",
+                "uid": "4b09880c-a35c-4fb9-9aab-a5f77cb28a80"
+              }
+            ],
+            "spec": [
+              {
+                "allocate_load_balancer_node_ports": true,
+                "cluster_ip": "10.99.146.155",
+                "cluster_ips": [
+                  "10.99.146.155"
+                ],
+                "external_ips": [],
+                "external_name": "",
+                "external_traffic_policy": "",
+                "health_check_node_port": 0,
+                "internal_traffic_policy": "Cluster",
+                "ip_families": [
+                  "IPv4"
+                ],
+                "ip_family_policy": "SingleStack",
+                "load_balancer_class": "",
+                "load_balancer_ip": "",
+                "load_balancer_source_ranges": [],
+                "port": [
+                  {
+                    "app_protocol": "",
+                    "name": "",
+                    "node_port": 0,
+                    "port": 8000,
+                    "protocol": "TCP",
+                    "target_port": "8000"
+                  }
+                ],
+                "publish_not_ready_addresses": false,
+                "selector": {
+                  "app": "counter-backend"
+                },
+                "session_affinity": "None",
+                "session_affinity_config": [],
+                "type": "ClusterIP"
+              }
+            ],
+            "status": [
+              {
+                "load_balancer": [
+                  {
+                    "ingress": []
+                  }
+                ]
+              }
+            ],
+            "timeouts": null,
+            "wait_for_load_balancer": true
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDB9LCJzY2hlbWFfdmVyc2lvbiI6IjEifQ==",
+          "dependencies": [
+            "kubernetes_namespace.counterapp"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "kubernetes_service",
+      "name": "frontend",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "id": "counterapp/frontend-service",
+            "metadata": [
+              {
+                "annotations": {},
+                "generate_name": "",
+                "generation": 0,
+                "labels": {},
+                "name": "frontend-service",
+                "namespace": "counterapp",
+                "resource_version": "35551",
+                "uid": "91d15dbc-67d0-448a-bcc5-92085df04abe"
+              }
+            ],
+            "spec": [
+              {
+                "allocate_load_balancer_node_ports": true,
+                "cluster_ip": "10.106.46.28",
+                "cluster_ips": [
+                  "10.106.46.28"
+                ],
+                "external_ips": [],
+                "external_name": "",
+                "external_traffic_policy": "Cluster",
+                "health_check_node_port": 0,
+                "internal_traffic_policy": "Cluster",
+                "ip_families": [
+                  "IPv4"
+                ],
+                "ip_family_policy": "SingleStack",
+                "load_balancer_class": "",
+                "load_balancer_ip": "",
+                "load_balancer_source_ranges": [],
+                "port": [
+                  {
+                    "app_protocol": "",
+                    "name": "",
+                    "node_port": 31407,
+                    "port": 80,
+                    "protocol": "TCP",
+                    "target_port": "80"
+                  }
+                ],
+                "publish_not_ready_addresses": false,
+                "selector": {
+                  "app": "counter-frontend"
+                },
+                "session_affinity": "None",
+                "session_affinity_config": [],
+                "type": "NodePort"
+              }
+            ],
+            "status": [
+              {
+                "load_balancer": [
+                  {
+                    "ingress": []
+                  }
+                ]
+              }
+            ],
+            "timeouts": null,
+            "wait_for_load_balancer": true
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDB9LCJzY2hlbWFfdmVyc2lvbiI6IjEifQ==",
+          "dependencies": [
+            "kubernetes_namespace.counterapp"
+          ]
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}
