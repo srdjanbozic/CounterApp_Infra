@@ -3,7 +3,7 @@ name: Terraform Plan on PR
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    branches: [dev, qa, prod, main]
+    branches: [dev, qa, iet, prod, main]
     paths:
       - "deployment/**.tf"
       - "counterapp-frontend/**"
