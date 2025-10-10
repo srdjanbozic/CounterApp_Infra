@@ -5,13 +5,6 @@ metadata:
   namespace: { { .Values.namespace } }
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    # CORS
-    nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
-
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
 spec:
   rules:
     - host: { { .Values.ingressHost } }
@@ -24,32 +17,7 @@ spec:
                 name: frontend-service
                 port:
                   number: { { .Values.port } }
-
           - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: backend-service
-                port:
-                  number: 8000
-
-          - path: /docs
-            pathType: Prefix
-            backend:
-              service:
-                name: backend-service
-                port:
-                  number: 8000
-
-          - path: /redoc
-            pathType: Prefix
-            backend:
-              service:
-                name: backend-service
-                port:
-                  number: 8000
-
-          - path: /openapi.json
             pathType: Prefix
             backend:
               service:
